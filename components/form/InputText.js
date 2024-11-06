@@ -1,5 +1,3 @@
-added inputText form component
-
 export default function InputText({label, id}) {
 	return (
 		<>
