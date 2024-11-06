@@ -6,11 +6,11 @@ export default function Footer() {
 			Created by {' '}
 			<Link
 				className={'text-primary-main'}
-				href={"https://www.mejaz.in"}
+				href={"https://github.com/NaomiW7/AIFitnessCoach"}
 				target={'_blank'}
 				rel={'noopener noreferrer'}
 			>
-				CS5500 Group 10 Final Project
+				CS5500 Final Project Group 10
 			</Link>
 		</div>
 	)
