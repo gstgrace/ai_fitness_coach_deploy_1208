@@ -1,8 +1,8 @@
-import {getCompletion} from "@/openAiServices";
-import {generateText} from "@/palm2Services"
+import { getCompletion } from "@/openAiServices";
+import { generateText } from "@/palm2Services";
 
 const generatePrompt = (userData) => {
-	return `
+  return `
 		Based on the user data below, generate an exercise plan for a week.
 		User data:
 		${JSON.stringify(userData)}
@@ -20,41 +20,39 @@ const generatePrompt = (userData) => {
 		For rest days return only one javascript object in exercises array with exercise field as "Rest Day" and remaining fields as "---"
 		
 		Answer:
-	`
-}
+	`;
+};
 
 export default async function handler(req, res) {
+  try {
+    if (req.method === "POST") {
+      let result;
+      const { height, weight, age, gender, fitnessLevel, goal, model } =
+        req.body;
 
-	try {
-		if (req.method === 'POST') {
-			let result;
-			const {
-				height,
-				weight,
-				age,
-				gender,
-				fitnessLevel,
-				goal,
-				model,
-			} = req.body
+      // generate the prompt
+      const prompt = generatePrompt({
+        height,
+        weight,
+        age,
+        gender,
+        fitnessLevel,
+        goal,
+      });
 
-			// generate the prompt
-			const prompt = generatePrompt({height, weight, age, gender, fitnessLevel, goal})
+      if (model.toLowerCase() === "openai") {
+        result = await getCompletion(prompt);
+      } else {
+        // PaLM API
+        result = await generateText(prompt);
+      }
 
-			if (model.toLowerCase() === 'openai') {
-				result = await getCompletion(prompt)
-			} else {
-				// PaLM API
-				result = await generateText(prompt)
-			}
-
-			return res.json({result})
-		} else {
-			// Handle other HTTP methods or return an appropriate error response
-			return res.status(405).json({error: 'Method Not Allowed'});
-		}
-	} catch (e) {
-		return res.status(405).json({error: e.message});
-	}
-
+      return res.json({ result });
+    } else {
+      // Handle other HTTP methods or return an appropriate error response
+      return res.status(405).json({ error: "Method Not Allowed" });
+    }
+  } catch (e) {
+    return res.status(405).json({ error: e.message });
+  }
 }

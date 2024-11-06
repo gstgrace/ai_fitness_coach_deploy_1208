@@ -1,12 +1,11 @@
-import '@/styles/globals.css'
-import {Toaster} from 'react-hot-toast';
+import "@/styles/globals.css";
+import { Toaster } from "react-hot-toast";
 
-
-export default function App({Component, pageProps}) {
-	return (
-		<>
-			<Component {...pageProps} />
-			<Toaster/>
-		</>
-	)
+export default function App({ Component, pageProps }) {
+  return (
+    <>
+      <Component {...pageProps} />
+      <Toaster />
+    </>
+  );
 }
