@@ -1,26 +1,44 @@
 import { getCompletion } from "@/openAiServices";
-import { generateText } from "@/palm2Services";
+import { generateText } from "@/vertexAiServices";
 
 const generatePrompt = (userData) => {
   return `
-		Based on the user data below, generate an exercise plan for a week.
-		User data:
-		${JSON.stringify(userData)}
-		
-		Generate 3 exercise per day.
-		Saturday and Sunday as rest days.
-		
-		Sample output JSON:
-		[{"day": "Monday","exercises": [{"exercise": "...", "sets": "...", "reps": "...", "weight": "...","rest": "..."}]}]
-		
-		"reps" in JSON is a string with number of reps with weight if needed
-		"rest" in JSON is the rest to be taken between sets
-		"weight" in JSON is the weight to be used for exercise, it should be with units if needed e.g. 10 lbs, else make it "---"
-		
-		For rest days return only one javascript object in exercises array with exercise field as "Rest Day" and remaining fields as "---"
-		
-		Answer:
-	`;
+  Based on the user data below, generate an exercise plan for a week.
+  
+  User data:
+  ${JSON.stringify(userData)}
+  
+  Requirements:
+  - Generate 3 exercises per day.
+  - Saturday and Sunday are rest days.
+  - Output the result as **valid JSON only**, without any additional text or formatting.
+  - Do **not** include code snippets, code fences, explanations, or any text outside the JSON.
+  - The JSON should follow this structure:
+  
+  [
+	{
+	  "day": "Monday",
+	  "exercises": [
+		{
+		  "exercise": "...",
+		  "sets": "...",
+		  "reps": "...",
+		  "weight": "...",
+		  "rest": "..."
+		}
+	  ]
+	}
+  ]
+  
+  Notes:
+  - The "reps" field is a string indicating the number of reps, including weight if needed.
+  - The "rest" field indicates the rest time between sets.
+  - The "weight" field is the weight to be used for the exercise, including units (e.g., "10 lbs"), or "---" if not applicable.
+  - For rest days, return an object with "day" set to the day, and "exercises" containing a single object with "exercise" set to "Rest Day" and other fields as "---".
+  
+  Please provide the JSON output below:
+  
+  `;
 };
 
 export default async function handler(req, res) {
@@ -40,11 +58,16 @@ export default async function handler(req, res) {
         goal,
       });
 
+      // Debug logs
+      console.log("Selected model:", model);
+      console.log("Generated prompt:", prompt);
+
       if (model.toLowerCase() === "openai") {
         result = await getCompletion(prompt);
-      } else {
-        // PaLM API
+      } else if (model.toLowerCase() === "gemini") {
         result = await generateText(prompt);
+      } else {
+        throw new Error("Invalid model selected.");
       }
 
       return res.json({ result });
