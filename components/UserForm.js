@@ -1,7 +1,7 @@
 import { BiSolidSend } from "react-icons/bi";
 import InputText from "@/components/form/InputText";
 import CustomSelect from "@/components/form/CustomSelect";
-import { AI_SOURCES, FITNESS_LEVELS, GENDERS, GOALS } from "@/constants";
+import { AI_SOURCES, FITNESS_LEVELS, GENDERS, GOALS } from "@/utils/constants";
 import toast from "react-hot-toast";
 
 const GENERATE_URL = "/api/generate";

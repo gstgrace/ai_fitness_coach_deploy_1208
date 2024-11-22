@@ -1,5 +1,5 @@
-import { getCompletion } from "@/openAiServices";
-import { generateText } from "@/vertexAiServices";
+import { getCompletion } from "@/services/openAiServices";
+import { generateText } from "@/services/vertexAiServices";
 
 const generatePrompt = (userData) => {
   return `
