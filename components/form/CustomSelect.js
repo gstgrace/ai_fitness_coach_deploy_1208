@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function CustomSelect({ label, id, values }) {
   return (
     <>
