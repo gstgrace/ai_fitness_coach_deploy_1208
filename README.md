@@ -12,6 +12,12 @@ To be added
 
 To be added
 
+<<<<<<< HEAD
 ## Demo
 
 ![Alt text](demo.jpg)
+=======
+##  Demo
+![Alt text](demo.jpg)
+
+>>>>>>> 9484fd69c6fc5bcc4c5211321de21572947bd862
