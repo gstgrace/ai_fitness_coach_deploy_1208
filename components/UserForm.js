@@ -1,54 +1,49 @@
 import { BiSolidSend } from "react-icons/bi";
 import InputText from "@/components/form/InputText";
 import CustomSelect from "@/components/form/CustomSelect";
-import { AI_SOURCES, FITNESS_LEVELS, GENDERS, GOALS } from "@/utils/constants";
+import { AI_SOURCES, FITNESS_LEVELS, GENDERS, GOALS } from "@/constants";
 import toast from "react-hot-toast";
+import React from "react";
 
 const GENERATE_URL = "/api/generate";
 
 export default function UserForm({ setData, setLoading, loading }) {
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent form submission and page reload
+    event.preventDefault();
     setLoading(true);
 
-    // Retrieve the form field values
-    const model = event.target.elements.model.value;
-    const height = event.target.elements.height.value;
-    const weight = event.target.elements.weight.value;
-    const age = event.target.elements.age.value;
-    const gender = event.target.elements.gender.value;
-    const fitnessLevel = event.target.elements.fitnessLevel.value;
-    const goal = event.target.elements.goal.value;
-
-    // Create an object with the form values
     const formData = {
-      height,
-      weight,
-      age,
-      gender,
-      fitnessLevel,
-      goal,
-      model,
+      model: event.target.elements.model.value,
+      height: event.target.elements.height.value,
+      weight: event.target.elements.weight.value,
+      age: event.target.elements.age.value,
+      gender: event.target.elements.gender.value,
+      fitnessLevel: event.target.elements.fitnessLevel.value,
+      goal: event.target.elements.goal.value,
     };
 
-    let response = await fetch(GENERATE_URL, {
-      method: "POST",
-      body: JSON.stringify(formData),
-      headers: {
-        "Content-type": "application/json",
-      },
-    });
+    try {
+      let response = await fetch(GENERATE_URL, {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
 
-    if (response.ok) {
-      response = await response.json();
+      const data = await response.json();
+
+      if (response.ok) {
+        setData(data.result);
+        setLoading(false);
+        toast.success("Workout generated!");
+      } else {
+        setLoading(false);
+        toast.error(data.error?.message || 'An error occurred');
+      }
+    } catch (error) {
       setLoading(false);
-      setData(response.result);
-      toast.success("Workout generated!");
-    } else {
-      response = await response.json();
-      console.error("error");
-      setLoading(false);
-      toast.error(response.error.message);
+      toast.error('Failed to generate workout');
     }
   };
 
@@ -57,6 +52,7 @@ export default function UserForm({ setData, setLoading, loading }) {
       className="w-full my-10 mt-6 p-4 border border-gray-100 rounded-xl shadow-md"
       onSubmit={handleSubmit}
       autoComplete={"off"}
+      data-testid="user-form"
     >
       <div className="flex flex-wrap -mx-3 mb-2">
         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">

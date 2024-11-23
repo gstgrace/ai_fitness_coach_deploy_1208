@@ -5,6 +5,7 @@ import Intro from "@/components/Intro";
 import Footer from "@/components/Footer";
 import UserForm from "@/components/UserForm";
 import TableToPDF from "@/components/TableToPDF";
+import React from "react";
 
 export default function Home() {
   const [data, setData] = useState([]);

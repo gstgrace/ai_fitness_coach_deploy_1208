@@ -1,3 +1,4 @@
+import React from 'react';
 const CustomTableHeader = ({ colName }) => (
   <th className="font-medium p-4 text-left">{colName}</th>
 );

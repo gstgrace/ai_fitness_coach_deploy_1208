@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Header() {
   return (
     <div className={"p-4 border-b fixed w-full z-50 bg-white"}>

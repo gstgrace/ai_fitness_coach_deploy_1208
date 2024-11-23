@@ -1,4 +1,5 @@
 import CustomTable from "@/components/CustomTable";
+import React from 'react';
 
 const ExerciseDay = ({ day }) => (
   <div className="w-full text-xl text-center py-2 font-medium border-b text-secondary-main">

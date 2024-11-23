@@ -1,14 +1,23 @@
 import { VertexAI } from "@google-cloud/vertexai";
 
+// Declare credential in wider scope
+let credential;
+
 // Decode the base64-encoded service key
-const credential = JSON.parse(
-  Buffer.from(process.env.GOOGLE_SERVICE_KEY ?? "", "base64").toString()
-);
+try {
+  const base64String = process.env.GOOGLE_SERVICE_KEY ?? "";
+  const decodedString = Buffer.from(base64String, "base64").toString();
+  console.log("Decoded string:", decodedString); // This will help debug
+  credential = JSON.parse(decodedString);  // Assign to the outer variable
+} catch (error) {
+  console.error("Error decoding or parsing service key:", error);
+  throw error;
+}
 
 // Initialize the Vertex AI client
 const vertexAI = new VertexAI({
-  project: "linen-team-424400-k8", // Replace with your Google Cloud Project ID
-  location: "us-central1",    // Adjust the location if necessary
+	project: "sample-mission-427719",  // Change to match your service account's project
+	location: "us-central1",
   googleAuthOptions: {
     credentials: {
       client_email: credential.client_email,

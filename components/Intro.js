@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Intro() {
   return (
     <div className={"text-md text-zinc-600 mt-3"}>
