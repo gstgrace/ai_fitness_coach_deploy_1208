@@ -1,6 +1,3 @@
-// tests/services/vertexAiServices.test.js
-
-// Set environment variable before requiring the module
 process.env.GOOGLE_SERVICE_KEY = Buffer.from(
   JSON.stringify({
     client_email: "test@test.com",
