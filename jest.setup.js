@@ -1,6 +1,5 @@
 require('@testing-library/jest-dom');
 
-// jest.setup.js
 jest.mock('openai', () => {
     return {
       OpenAI: jest.fn().mockImplementation(() => {
@@ -13,7 +12,6 @@ jest.mock('openai', () => {
     };
   });
   
-
 
 require('dotenv').config({ path: '.env.local' });
 process.env.OPENAI_API_KEY = 'mocked-api-key';
