@@ -1,7 +1,8 @@
 import { getCompletion } from "@/services/openAiServices";
 import { generateText } from "@/services/vertexAiServices";
 
-const generatePrompt = (userData) => {
+
+export const generatePrompt = (userData) => {
   return `
   Based on the user data below, generate an exercise plan for a week.
   

@@ -6,7 +6,9 @@ module.exports = {
   moduleDirectories: ['node_modules', '<rootDir>'],
   moduleNameMapper: {
     '^@/components/(.*)$': '<rootDir>/components/$1',
-    '^@/constants$': '<rootDir>/__mocks__/constants.js'
+    '^@/constants$': '<rootDir>/__mocks__/constants.js',
+    '^@/pages/(.*)$': '<rootDir>/pages/$1',
+    '^@/(.*)$': '<rootDir>/$1', // Fallback for all other paths
   },
   transform: {
     '^.+\\.(js|jsx)$': 'babel-jest'
