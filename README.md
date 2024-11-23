@@ -13,5 +13,4 @@ To be added
 To be added
 
 ## Demo
-
-![Alt text](demo.jpg)
+![Demo](https://github.com/NaomiW7/AIFitnessCoach/raw/main/public/demo.jpg)
