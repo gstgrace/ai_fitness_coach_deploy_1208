@@ -28,7 +28,7 @@ const vertexAI = new VertexAI({
   },
 });
 // Specify the model name
-const modelName = "gemini-1.5-pro-002";
+const modelName = "gemini-1.5-flash";
 // Get the generative model
 const generativeModel = vertexAI.preview.getGenerativeModel({
   model: modelName,
