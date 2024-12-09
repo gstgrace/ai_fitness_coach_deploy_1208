@@ -24,4 +24,6 @@ To run this project locally, follow these simple steps.
 - To run the test suite, use the command “npm test”.
 
 ## Demo
+![Demo](https://github.com/NaomiW7/AIFitnessCoach/raw/main/public/login.jpg)
 ![Demo](https://github.com/NaomiW7/AIFitnessCoach/raw/main/public/demo.jpg)
+![Demo](https://github.com/NaomiW7/AIFitnessCoach/raw/main/public/logout.jpg)
