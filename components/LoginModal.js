@@ -1,40 +1,51 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
-export default function LoginModal({ onClose, onLogin, onSignUp, loading }) {
+export default function LoginModal({ onClose, onLogin, onSignUp, loading, setIsAuthenticated }) {
   const [isSignUp, setIsSignUp] = useState(false); // Toggle between login and sign up
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to manage inline errors
 
-
+  // Success and error feedback using toast
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError(""); 
     try {
       const response = await onLogin(email, password);
       if (response.status !== 200) {
-        throw new Error;
+        throw new Error();
       }
-      onClose();
+      toast.success("Login successful!");
+      setIsAuthenticated(true); // Set as authenticated after successful login
+      onClose(); // Close modal on success
     } catch (err) {
-      setError("Login failed. Please check your credentials and try again.");
+      toast.error("Please check your credentials and try again.");
     }
   };
-  
+
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
       const response = await onSignUp(email, password);
-      if (response.status !== 200) {
-        throw new Error;
+      if (response.status !== 201) {
+        throw new Error();
+      } else {
+        // After successful sign-up, automatically log in the user
+        const loginResponse = await onLogin(email, password); // Auto-login after sign-up
+        if (loginResponse.status !== 200) {
+          throw new Error("Login failed after sign-up. Please try again.");
+        }
+        toast.success("Sign-up and Login successful!");
+        setIsAuthenticated(true); // Set as authenticated after successful sign-up and login
+        onClose(); // Close modal on success
       }
-      onClose();
     } catch (err) {
-      setError("Sign Up failed. User already exists.");
+      toast.error("Sign-up failed. Please try again.");
     }
   };
-  
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">

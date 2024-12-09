@@ -24,16 +24,7 @@ export default function AuthButton() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-
-    const data = await response.json();
-    if (data.message === "User created successfully") {
-      setIsAuthenticated(true);
-      localStorage.setItem("authToken", data.token);  // Store the token
-      console.log("Signup successful");
-      setShowModal(false);  // Close the modal
-    } else {
-      console.error(data.message);  // Handle error (show to user)
-    }
+    return response;
   };
 
   const handleLogin = async (email, password) => {
@@ -42,16 +33,7 @@ export default function AuthButton() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-
-    const data = await response.json();
-    if (data.message === "Login successful") {
-      setIsAuthenticated(true);
-      localStorage.setItem("authToken", data.token);  // Store the token
-      console.log("Login successful");
-      setShowModal(false);  // Close the modal
-    } else {
-      console.error(data.message);  // Handle error (show to user)
-    }
+    return response;
   };
 
   return (
@@ -67,6 +49,7 @@ export default function AuthButton() {
           onClose={handleModalClose}
           onSignUp={handleSignUp}
           onLogin={handleLogin}
+          setIsAuthenticated={setIsAuthenticated} // Pass the setter here
         />
       )}
     </>
