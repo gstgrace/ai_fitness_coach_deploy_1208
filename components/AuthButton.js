@@ -2,64 +2,55 @@ import React, { useState } from "react";
 import LoginModal from "./LoginModal";
 
 export default function AuthButton() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);  // Track if the user is logged in
-  const [showModal, setShowModal] = useState(false);  // Track modal visibility
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  // Handle authentication (login or logout)
   const handleAuth = () => {
     if (isAuthenticated) {
-      // Logout logic: clear user data, mark as logged out
       setIsAuthenticated(false);
-      // Optionally, clear localStorage or cookies
+      localStorage.removeItem("authToken");  // Clear the token
     } else {
-      // Show the login/signup modal
       setShowModal(true);
     }
   };
 
   const handleModalClose = () => {
-    setShowModal(false);  // Close the modal
+    setShowModal(false);
   };
 
   const handleSignUp = async (email, password) => {
-    // Call the API for user sign-up
     const response = await fetch("/api/signup", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
     if (data.message === "User created successfully") {
-      // Handle success (e.g., mark as authenticated)
       setIsAuthenticated(true);
+      localStorage.setItem("authToken", data.token);  // Store the token
       console.log("Signup successful");
+      setShowModal(false);  // Close the modal
     } else {
-      // Handle error (e.g., show error message)
-      console.error(data.message);
+      console.error(data.message);  // Handle error (show to user)
     }
   };
 
   const handleLogin = async (email, password) => {
-    // Call the API for user login
     const response = await fetch("/api/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
     if (data.message === "Login successful") {
-      // Handle success (e.g., mark as authenticated)
       setIsAuthenticated(true);
+      localStorage.setItem("authToken", data.token);  // Store the token
       console.log("Login successful");
+      setShowModal(false);  // Close the modal
     } else {
-      // Handle error (e.g., show error message)
-      console.error(data.message);
+      console.error(data.message);  // Handle error (show to user)
     }
   };
 

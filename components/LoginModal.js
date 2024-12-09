@@ -1,36 +1,51 @@
 import React, { useState } from "react";
 
 export default function LoginModal({ onClose, onLogin, onSignUp, loading }) {
-  const [isSignUp, setIsSignUp] = useState(false);  // Toggle between login and sign up
+  const [isSignUp, setIsSignUp] = useState(false); // Toggle between login and sign up
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // State to manage inline errors
 
-  // Handle login form submission
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+    setError(""); 
     try {
-      await onLogin(email, password);  // Call login handler passed as prop
-      onClose();  // Close the modal on successful login
+      const response = await onLogin(email, password);
+      if (response.status !== 200) {
+        throw new Error;
+      }
+      onClose();
     } catch (err) {
-      console.log('Login error:', err.response?.data?.message || err.message);  // Log the error message from the server
+      setError("Login failed. Please check your credentials and try again.");
     }
   };
-
-  // Handle sign-up form submission
+  
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
-      await onSignUp(email, password);  // Call sign-up handler passed as prop
-      onClose();  // Close the modal on successful sign-up
+      const response = await onSignUp(email, password);
+      if (response.status !== 200) {
+        throw new Error;
+      }
+      onClose();
     } catch (err) {
-      console.log('Sign-up error:', err.response?.data?.message || err.message);  // Log the error message from the server
+      setError("Sign Up failed. User already exists.");
     }
   };
-
+  
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl font-bold mb-4">{isSignUp ? "Sign Up" : "Sign In"}</h2>
+
+        {/* Error Message Display */}
+        {error && (
+          <div className="bg-red-500 text-white text-center p-2 rounded-md mb-4">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={isSignUp ? handleSignUpSubmit : handleLoginSubmit}>
           <div className="mb-4">

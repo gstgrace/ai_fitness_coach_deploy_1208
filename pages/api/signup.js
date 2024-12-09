@@ -16,12 +16,15 @@ export default async function handler(req, res) {
   try {
     // Connect to MongoDB
     const client = await clientPromise;
-    const db = client.db('fitnessDB'); 
+    const db = client.db('fitnessDB');
 
     // Check if user already exists
     const existingUser = await db.collection('users').findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: 'User already exists' });
+      return res.status(409).json({
+        message: 'User already exists',
+        error: 'USER_ALREADY_EXISTS',
+      });
     }
 
     // Hash the password before storing
@@ -36,6 +39,19 @@ export default async function handler(req, res) {
     return res.status(201).json({ message: 'User created successfully', userId: result.insertedId });
   } catch (error) {
     console.error("Error occurred during signup:", error);
-    return res.status(500).json({ message: 'Server error', error: error.message });
+
+    // Handle MongoDB related errors
+    if (error.name === 'MongoError') {
+      return res.status(500).json({
+        message: 'Database error. Please try again later.',
+        error: 'DATABASE_ERROR',
+      });
+    }
+
+    // Catch any other errors and return a server error response
+    return res.status(500).json({
+      message: 'Server error. Please try again later.',
+      error: 'SERVER_ERROR',
+    });
   }
 }

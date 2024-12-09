@@ -22,13 +22,19 @@ export default async function handler(req, res) {
     // Find the user by email
     const user = await db.collection('users').findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password. Please check your credentials.' });
+      return res.status(401).json({
+        message: 'Invalid email or password. Please check your credentials.',
+        error: 'INVALID_CREDENTIALS',
+      });
     }
 
     // Compare the password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password. Please check your credentials.' });
+      return res.status(401).json({
+        message: 'Invalid email or password. Please check your credentials.',
+        error: 'INVALID_CREDENTIALS',
+      });
     }
 
     // Generate JWT token
@@ -41,6 +47,18 @@ export default async function handler(req, res) {
     return res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
     console.error("Error occurred during login:", error);
-    return res.status(500).json({ message: 'Server error. Please try again later.', error: error.message });
+
+    // Provide more specific error messages
+    if (error.name === 'MongoError') {
+      return res.status(500).json({
+        message: 'Database error. Please try again later.',
+        error: 'DATABASE_ERROR',
+      });
+    }
+
+    return res.status(500).json({
+      message: 'Server error. Please try again later.',
+      error: 'SERVER_ERROR',
+    });
   }
 }
