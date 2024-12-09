@@ -4,12 +4,11 @@ import toast from "react-hot-toast";
 
 export default function AuthButton() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [showLogOutConfirmation, setShowLogOutConfirmation] = useState(false); // State for confirmation modal
+  const [showModal, setShowModal] = useState(true);  
+  const [showLogOutConfirmation, setShowLogOutConfirmation] = useState(false); 
 
   const handleAuth = () => {
     if (isAuthenticated) {
-      // Show the confirmation modal before logging out
       setShowLogOutConfirmation(true);
     } else {
       setShowModal(true);
@@ -22,13 +21,13 @@ export default function AuthButton() {
 
   const handleLogOut = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem("authToken");  // Clear the token
-    setShowLogOutConfirmation(false); // Close the confirmation modal
+    localStorage.removeItem("authToken");  
+    setShowLogOutConfirmation(false); 
     toast.success("Log out successfully!");
   };
 
   const handleCancelLogOut = () => {
-    setShowLogOutConfirmation(false); // Close the confirmation modal without logging out
+    setShowLogOutConfirmation(false); 
   };
 
   const handleSignUp = async (email, password) => {
