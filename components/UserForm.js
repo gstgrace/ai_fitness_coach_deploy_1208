@@ -7,16 +7,72 @@ import React from "react";
 
 const GENERATE_URL = "/api/generate";
 
+// User input validation
+function validateNumber(value, { min, max } = {}) {
+  if (!value) {
+    return { valid: false, message: "Value is required." };
+  }
+
+  const numericValue = Number(value);
+
+  if (isNaN(numericValue)) {
+    return { valid: false, message: "Must be a number." };
+  }
+
+  if (min !== undefined && numericValue < min) {
+    return {
+      valid: false,
+      message: `Value must be greater than or equal to ${min}.`,
+    };
+  }
+
+  if (max !== undefined && numericValue > max) {
+    return {
+      valid: false,
+      message: `Value must be less than or equal to ${max}.`,
+    };
+  }
+
+  return { valid: true };
+}
+
 export default function UserForm({ setData, setLoading, loading }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
 
+    const heightValue = event.target.elements.height.value.trim();
+    const weightValue = event.target.elements.weight.value.trim();
+    const ageValue = event.target.elements.age.value.trim();
+
+    // Perform client-side input validation check
+    const heightCheck = validateNumber(heightValue, { min: 50, max: 250 }); // Allowed range for height in cm
+    const weightCheck = validateNumber(weightValue, { min: 20, max: 300 }); // Allowed range for weight in kg
+    const ageCheck = validateNumber(ageValue, { min: 5, max: 120 }); // Allowed range for age in years
+
+    if (!heightCheck.valid) {
+      setLoading(false);
+      toast.error(`Invalid height input: ${heightCheck.message}`);
+      return;
+    }
+
+    if (!weightCheck.valid) {
+      setLoading(false);
+      toast.error(`Invalid weight input: ${weightCheck.message}`);
+      return;
+    }
+
+    if (!ageCheck.valid) {
+      setLoading(false);
+      toast.error(`Invalid age input: ${ageCheck.message}`);
+      return;
+    }
+
     const formData = {
       model: event.target.elements.model.value,
-      height: event.target.elements.height.value,
-      weight: event.target.elements.weight.value,
-      age: event.target.elements.age.value,
+      height: heightValue,
+      weight: weightValue,
+      age: ageValue,
       gender: event.target.elements.gender.value,
       fitnessLevel: event.target.elements.fitnessLevel.value,
       goal: event.target.elements.goal.value,
@@ -39,11 +95,11 @@ export default function UserForm({ setData, setLoading, loading }) {
         toast.success("Workout generated!");
       } else {
         setLoading(false);
-        toast.error(data.error?.message || 'An error occurred');
+        toast.error(data.error?.message || "An error occurred");
       }
     } catch (error) {
       setLoading(false);
-      toast.error('Failed to generate workout');
+      toast.error("Failed to generate workout");
     }
   };
 
