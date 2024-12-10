@@ -7,42 +7,96 @@ export default function LoginModal({ onClose, onLogin, onSignUp, loading, setIsA
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to manage inline errors
 
-  // Success and error feedback using toast
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    setError(""); 
+  // Function to request the 2FA code from the backend
+  const request2FACode = async (email) => {
     try {
-      const response = await onLogin(email, password);
-      if (response.status !== 200) {
-        throw new Error();
-      }
-      toast.success("Login successful!");
-      setIsAuthenticated(true); // Set as authenticated after successful login
-      onClose(); // Close modal on success
-    } catch (err) {
-      toast.error("Please check your credentials and try again.");
+      const response = await fetch("/api/send-2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) throw new Error("Failed to send 2FA code. Please try again.");
+
+      const data = await response.json();
+      return data.generatedCode;
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "An error occurred.");
+      return null;
     }
   };
 
+  // Function to handle sign-up
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(""); // Reset any previous error messages
+
     try {
-      const response = await onSignUp(email, password);
-      if (response.status !== 201) {
-        throw new Error();
-      } else {
-        // After successful sign-up, automatically log in the user
-        const loginResponse = await onLogin(email, password); // Auto-login after sign-up
-        if (loginResponse.status !== 200) {
-          throw new Error("Login failed after sign-up. Please try again.");
-        }
-        toast.success("Sign-up and Login successful!");
-        setIsAuthenticated(true); // Set as authenticated after successful sign-up and login
-        onClose(); // Close modal on success
+      // Step 1: Request 2FA Code
+      const generatedCode = await request2FACode(email);
+      if (!generatedCode) return toast.error("Failed to request 2FA code, please try again.");
+
+      // Step 2: Prompt for 2FA Code
+      const enteredCode = prompt("Enter the 2FA code sent to your email:");
+
+      if (!enteredCode || enteredCode !== generatedCode) {
+        // Combined error handling for invalid or missing code
+        toast.error(enteredCode ? "Invalid 2FA code." : "2FA code is required.");
+        return;
       }
+
+      // Step 3: Write User to Database (sign-up)
+      const signUpResponse = await onSignUp(email, password);
+      if (signUpResponse.status !== 201) throw new Error("Sign-up failed. User already exists.");
+
+      // Step 4: Auto-login After Successful Sign-Up
+      const loginResponse = await onLogin(email, password);
+      if (loginResponse.status !== 200) throw new Error("Login failed after sign-up.");
+
+      toast.success("Sign-up and Login successful!");
+      setIsAuthenticated(true); // Set as authenticated after successful login
+      onClose(); // Close modal on success
     } catch (err) {
-      toast.error("Sign-up failed. Please try again.");
+      console.error(err); // For debugging
+      toast.error(err.message || "An error occurred during sign-up.");
+    }
+  };
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setError(""); // Reset previous errors
+
+    try {
+      // Step 1: Attempt login
+      const response = await onLogin(email, password);
+      if (response.status !== 200) {
+        throw new Error("Invalid credentials.");
+      }
+
+      // Step 2: Request 2FA Code if login is successful
+      const generatedCode = await request2FACode(email); // Send request to backend to send 2FA code
+      if (!generatedCode) {
+        throw new Error("Failed to request 2FA code, please try again.");
+      }
+
+      // Step 3: Prompt for 2FA Code
+      const enteredCode = prompt("Enter the 2FA code sent to your email:");
+
+      if (!enteredCode || enteredCode !== generatedCode) {
+        // Combined error handling for invalid or missing code
+        toast.error(enteredCode ? "Invalid 2FA code." : "2FA code is required.");
+        return;
+      }
+
+      // Step 4: Complete login process if 2FA validation is successful
+      toast.success("Login successful!");
+      setIsAuthenticated(true); // Set as authenticated after successful login
+      onClose(); // Close modal on success
+
+    } catch (err) {
+      console.error(err); // Debugging information
+      toast.error(err.message || "An error occurred during login.");
     }
   };
 
