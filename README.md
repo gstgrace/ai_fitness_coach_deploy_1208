@@ -27,3 +27,7 @@ To run this project locally, follow these simple steps.
 ![Demo](https://github.com/NaomiW7/AIFitnessCoach/raw/main/public/login.jpg)
 ![Demo](https://github.com/NaomiW7/AIFitnessCoach/raw/main/public/demo.jpg)
 ![Demo](https://github.com/NaomiW7/AIFitnessCoach/raw/main/public/logout.jpg)
+<<<<<<< HEAD
+=======
+![Demo](https://github.com/NaomiW7/AIFitnessCoach/raw/main/public/testPassed.jpg)
+>>>>>>> 450b29b887adacacfce2f7a3a137cb6dec8dcc97
